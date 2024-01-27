@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:shopping_list/data/categories.dart';
 import 'package:shopping_list/models/category.dart';
-import 'package:shopping_list/models/grocery_item.dart';
+// import 'package:shopping_list/models/grocery_item.dart';
 import 'package:http/http.dart' as http;
+
 class NewItem extends StatefulWidget {
   const NewItem({super.key});
   @override
@@ -17,21 +18,32 @@ class _NewItemState extends State<NewItem> {
   var _enteredName = "";
   var _enteredQuantity = 1;
   var _selectedCategory = categories[Categories.vegetables]!;
-  void _saveItem() {
+  void _saveItem() async {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
       final url = Uri.https(
           'shopping-list-88052-default-rtdb.asia-southeast1.firebasedatabase.app',
           'shopping-list.json');
-      http.post(url,
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: json.encode({
+      await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: json.encode(
+          {
             'name': _enteredName,
             'quantity': _enteredQuantity,
             'category': _selectedCategory.title,
-          }));
+          },
+        ),
+      );
+      if (!context.mounted) {
+        // if context is not mounted to the widget anymore
+        return;
+      }
+      // else
+      Navigator.of(context).pop();
+
       // Navigator.of(context).pop(
       //   GroceryItem(
       //     category: _selectedCategory,
