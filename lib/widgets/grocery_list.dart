@@ -28,15 +28,14 @@ class _GroceryListState extends State<GroceryList> {
         'shopping-list-88052-default-rtdb.asia-southeast1.firebasedatabase.app',
         'shopping-list.json');
     final response = await http.get(url);
-    final Map<String, dynamic> listData =
-        json.decode(response.body);
-    final List<GroceryItem> _loadedItems = [];
+    final Map<String, dynamic> listData = json.decode(response.body);
+    final List<GroceryItem> loadedItems = [];
     for (final item in listData.entries) {
       final category = categories.entries
           .firstWhere(
               (element) => element.value.title == item.value['category'])
           .value;
-      _loadedItems.add(
+      loadedItems.add(
         GroceryItem(
           category: category,
           id: item.key,
@@ -46,27 +45,27 @@ class _GroceryListState extends State<GroceryList> {
       );
     }
     setState(() {
-      _groceryItems = _loadedItems;
+      _groceryItems = loadedItems;
     });
   }
 
   void _addItem() async {
-    await Navigator.of(context).push<GroceryItem>(
+    final newItem = await Navigator.of(context).push<GroceryItem>(
       MaterialPageRoute(
         builder: (ctx) => const NewItem(),
       ),
     );
 
-    _loadItems();
+    // _loadItems();
 
-    // if (newItem == null) {
-    //   // In case we came back without adding anything
-    //   return;
-    // }
+    if (newItem == null) {
+      // In case we came back without adding anything
+      return;
+    }
 
-    // setState(() {
-    //   _groceryItems.add(newItem);
-    // });
+    setState(() {
+      _groceryItems.add(newItem);
+    });
   }
 
   void _removeItem(GroceryItem item) {

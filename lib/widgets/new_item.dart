@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:shopping_list/data/categories.dart';
 import 'package:shopping_list/models/category.dart';
-// import 'package:shopping_list/models/grocery_item.dart';
+import 'package:shopping_list/models/grocery_item.dart';
 import 'package:http/http.dart' as http;
 
 class NewItem extends StatefulWidget {
@@ -24,7 +24,7 @@ class _NewItemState extends State<NewItem> {
       final url = Uri.https(
           'shopping-list-88052-default-rtdb.asia-southeast1.firebasedatabase.app',
           'shopping-list.json');
-      await http.post(
+      final response = await http.post(
         url,
         headers: {
           'Content-Type': 'application/json',
@@ -37,12 +37,17 @@ class _NewItemState extends State<NewItem> {
           },
         ),
       );
+      final resData = json.decode(response.body);
       if (!context.mounted) {
         // if context is not mounted to the widget anymore
         return;
       }
       // else
-      Navigator.of(context).pop();
+      Navigator.of(context).pop(GroceryItem(
+          category: _selectedCategory,
+          id: resData['name'],
+          name: _enteredName,
+          quantity: _enteredQuantity));
 
       // Navigator.of(context).pop(
       //   GroceryItem(
