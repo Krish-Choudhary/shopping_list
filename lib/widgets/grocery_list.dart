@@ -113,6 +113,7 @@ class _GroceryListState extends State<GroceryList> {
         if (!context.mounted) {
           return;
         }
+        // ignore: use_build_context_synchronously
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
           content: Text(
             "Failed to delete. Try again later.",
